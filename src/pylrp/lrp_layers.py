@@ -47,3 +47,17 @@ class LRPConv2d(nn.Conv2d):
 
     def backward_relevance(self, R, rule):
         raise NotImplementedError
+        
+class LRPMaxPool2d(nn.MaxPool2d):
+    
+    def __init__(self, kernel_size, stride=None, padding=0, dilation=1, return_indices=True, ceil_mode=False):
+        super(LRPMaxPool2d, self).__init__(kernel_size, stride, padding, dilation, return_indices, ceil_mode)
+        
+    def forward(self, x):
+        y, indices = super(LRPMaxPool2d, self).forward(x)
+        self.binary_mask = torch.zeros(x.size())
+        self.binary_mask[indices] = 1
+        return y
+    
+    def backward_relevance(self, R):
+        return self.binary_mask * R
