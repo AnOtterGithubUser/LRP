@@ -38,6 +38,13 @@ class LRPLinear(nn.Linear):
 
 
 class LRPReLU(nn.ReLU):
+    def __init__(self, inplace=False):
+        super(LRPReLU, self).__init__(inplace=inplace)
+
+    def forward(self, x):
+        y = super(LRPReLU, self).forward(x)
+        self.mask = y == x
+        return y
 
     def backward_relevance(self, R, rule):
         return R
@@ -47,17 +54,20 @@ class LRPConv2d(nn.Conv2d):
 
     def backward_relevance(self, R, rule):
         raise NotImplementedError
-        
+
+
 class LRPMaxPool2d(nn.MaxPool2d):
     
     def __init__(self, kernel_size, stride=None, padding=0, dilation=1, return_indices=True, ceil_mode=False):
         super(LRPMaxPool2d, self).__init__(kernel_size, stride, padding, dilation, return_indices, ceil_mode)
         
     def forward(self, x):
-        y, indices = super(LRPMaxPool2d, self).forward(x)
-        self.binary_mask = torch.zeros(x.size())
-        self.binary_mask[indices] = 1
+        self.activations = x.detach().data
+        y, self.indices = super(LRPMaxPool2d, self).forward(x)
         return y
     
     def backward_relevance(self, R):
-        return self.binary_mask * R
+        mask = torch.zeros(self.activations.numel())
+        mask[self.indices] = R
+        mask = mask.view(self.activations.size())
+        return mask
