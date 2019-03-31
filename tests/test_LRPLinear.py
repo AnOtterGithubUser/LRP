@@ -1,7 +1,6 @@
 import pytest
-from src.pylrp import lrp_layers
+from pylrp import lrp_layers
 import torch
-import numpy as np
 
 
 def test_LRPMaxPool2d_forward_pass_should_record_the_indices_of_the_maximum_elements_in_input():

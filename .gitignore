@@ -1,6 +1,17 @@
-.cache/
-.idea/
+# Compiled python
+*.pyc
+*.pyd
+
+# IPython notebooks checkpoint
 .ipynb_checkpoints/
+
+# PyCharm environment files
 __pycache__/
 venv/
-.pyc
+.idea/
+.cache/
+
+# PyLRP
+data/
+sandbox/
+notebooks/
