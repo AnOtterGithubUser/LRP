@@ -1,9 +1,9 @@
 from setuptools import setup
 
 setup(
-    name='PyLRP',
+    name='PyExplain',
     version='0.0.1',
-    packages=['pylrp'],
+    packages=['pyexplain'],
     url='https://github.com/AnOtterGithubUser/LRP',
     license='',
     author='Thomas PESNEAU & Amine SABONI',
