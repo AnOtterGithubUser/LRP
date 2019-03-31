@@ -1,5 +1,5 @@
 *This project is a work in progress, many features may be added/removed/
-changed in the coming month*
+changed in the coming months*
 
 # PyExplain
 
