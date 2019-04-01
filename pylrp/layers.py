@@ -2,8 +2,12 @@ import torch
 import torch.nn as nn
 from copy import deepcopy
 
+#TODO: replace the syntax V[V<0] = 0 by torch.maximum(0)
 
 class LRPLinear(nn.Linear):
+
+    def __init__(self, *args, **kwargs):
+        super(LRPLinear, self).__init__(*args, **kwargs)
 
     def forward(self, x):
         self.activations = x.detach().data
@@ -37,30 +41,24 @@ class LRPLinear(nn.Linear):
         return R
 
 
-class LRPReLU(nn.ReLU):
-    def __init__(self, inplace=False):
-        super(LRPReLU, self).__init__(inplace=inplace)
+class LRPConv2d(nn.Conv2d):
+
+    def __init__(self, *args, **kwargs):
+        super(LRPConv2d, self).__init__(*args, **kwargs)
 
     def forward(self, x):
-        y = super(LRPReLU, self).forward(x)
-        self.mask = y == x
-        return y
-
-    def backward_relevance(self, R, rule):
-        return R
-
-
-class LRPConv2d(nn.Conv2d):
+        return super(LRPConv2d, self).forward(x)
 
     def backward_relevance(self, R, rule):
         raise NotImplementedError
 
 
 class LRPMaxPool2d(nn.MaxPool2d):
-    
-    def __init__(self, kernel_size, stride=None, padding=0, dilation=1, return_indices=True, ceil_mode=False):
-        super(LRPMaxPool2d, self).__init__(kernel_size, stride, padding, dilation, return_indices, ceil_mode)
-        
+
+    def __init__(self, *args, **kwargs):
+        kwargs["return_indices"] = True
+        super(LRPMaxPool2d, self).__init__(*args, **kwargs)
+
     def forward(self, x):
         self.activations = x.detach().data
         y, self.indices = super(LRPMaxPool2d, self).forward(x)
